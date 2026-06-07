@@ -6,51 +6,14 @@
 #include <Wifi.h>
 
 #include "common_def.h"
-#include "pin_mapping.h"
-// #include "display/standard_display.h"
+#include "display/standard_display.h"
 #include "display/layout_display.h"
 #include "display/input_display.h"
-#include "display/serial_display.h"
 #include "socd.h"
 
 #include "driver/rtc_io.h"
 #include "tusb.h"
-
-#ifdef MY_DEVKIT
-constexpr uint8_t wiredModePin = 4;         // USB,BLE启动模式
-constexpr uint8_t defHomePin = 1;           // 默认HOME
-constexpr uint8_t defStartPin = 2;         // 默认START
-constexpr uint8_t sckPin = 14;              // 屏幕SCK
-constexpr uint8_t sdaPin = 13;              // 屏幕SDA
-constexpr uint8_t powerPin = 5;             // 电量监测
-#endif
-
-#ifdef BOARD_NOLOGO
-constexpr uint8_t wiredModePin = 6;         // USB,BLE启动模式
-constexpr uint8_t defHomePin = 4;           // 默认HOME
-constexpr uint8_t defStartPin = 41;         // 默认START
-constexpr uint8_t sckPin = 12;              // 屏幕SCK
-constexpr uint8_t sdaPin = 11;              // 屏幕SDA
-constexpr uint8_t powerPin = 9;             // 电量监测
-#endif
-
-#ifdef BOARD_WALNUT
-constexpr uint8_t wiredModePin = 8;         // USB,BLE启动模式
-constexpr uint8_t defHomePin = 6;           // 默认HOME
-constexpr uint8_t defStartPin = 2;         // 默认START
-constexpr uint8_t sckPin = 14;              // 屏幕SCK
-constexpr uint8_t sdaPin = 13;             // 屏幕SDA
-constexpr uint8_t powerPin = 11;             // 电量监测
-#endif
-
-#ifdef BOARD_DEVKITC
-constexpr uint8_t defHomePin = 9;
-constexpr uint8_t defStartPin = 8;
-constexpr uint8_t sckPin = 5;
-constexpr uint8_t sdaPin = 4;
-constexpr uint8_t powerPin = 42;             // 电量监测
-constexpr uint8_t wiredModePin = 41;         // USB,BLE启动模式
-#endif
+#include <NimBLEDevice.h>
 
 pin_infos_t             pinInfos;
 loop_data_t             loopData;
@@ -134,13 +97,28 @@ void setupWirelessController()
     gamepad->onVibrate.attach(vibrationSlot);
 
     // Add all child devices to the top-level composite HID device to manage them
-    compositeHID = new BleCompositeHID((char const*)u8"久寿川-HITBOX-BLE", "kusugawa", getBatterLevel());
+    compositeHID = new BleCompositeHID("luluhui-ble","luluhui", getBatterLevel());
     compositeHID->addDevice(gamepad);
 
     // Start the composite HID device to broadcast HID reports
     // Serial.println("Starting composite HID device...");
     compositeHID->begin(hostConfig);
-    // 
+    
+    // // 配置 BLE 广播参数以提高 Windows 11 的可发现性
+    // // 设置广播间隔为 20ms-150ms（快速可发现）
+    // // 启用一般可发现模式
+    // NimBLEAdvertising* pAdvertising = NimBLEDevice::getAdvertising();
+    // if(pAdvertising) {
+    //     // 设置广播间隔 (单位: 0.625ms)
+    //     // 20ms = 32, 150ms = 240
+    //     pAdvertising->setMinInterval(32);   // 最小间隔 20ms
+    //     pAdvertising->setMaxInterval(240);  // 最大间隔 150ms
+        
+    //     // 重启广播以应用新参数
+    //     pAdvertising->stop();
+    //     pAdvertising->start();
+    // }
+    
     WiFi.setSleep(WIFI_PS_MIN_MODEM);
 }
 
@@ -489,8 +467,9 @@ void wirelessLoop()
         // loopData.sendCount2 = th.elapsed();
 
         gamepad->pressDPadDirectionFlag((XboxDpadFlags)dpadFlags);
-        gamepad->setLeftThumb(0, 0);
-        gamepad->setRightThumb(0, 0);
+        // 设置摇杆为中心位置 (128, 128) 表示摇杆回中
+        gamepad->setLeftThumb(128, 128);
+        gamepad->setRightThumb(128, 128);
         gamepad->sendGamepadReport();
 
         loopData.swapBuffer();

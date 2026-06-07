@@ -67,11 +67,13 @@ IDisplay* StandardDisplay::update(pin_infos_t *info) {
 
         // crack way
         // left right up donw
+        int pins[4];
         #ifdef MY_DEVKIT
-        int pins[] = {15, 16, 17, 18};
-        #endif
-        #ifdef BOARD_NOLOGO
-        int pins[] = {13, 14, 15, 16};
+        pins[0] = 15; pins[1] = 16; pins[2] = 17; pins[3] = 18;
+        #elif defined(BOARD_NOLOGO)
+        pins[0] = 13; pins[1] = 14; pins[2] = 15; pins[3] = 16;
+        #else
+        pins[0] = 0; pins[1] = 0; pins[2] = 0; pins[3] = 0; // Default pins when no board is defined
         #endif
         int val = 0;
         for(int i = 0; i<4; ++i) {

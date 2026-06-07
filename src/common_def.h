@@ -11,6 +11,45 @@
 #include <string>
 #include "socd.h"
 
+// ========================================
+// Board Pin Definitions
+// ========================================
+#ifdef MY_DEVKIT
+constexpr uint8_t wiredModePin = 4;         // USB,BLE启动模式
+constexpr uint8_t defHomePin = 1;           // 默认HOME
+constexpr uint8_t defStartPin = 2;          // 默认START
+constexpr uint8_t sckPin = 14;              // 屏幕SCK
+constexpr uint8_t sdaPin = 13;              // 屏幕SDA
+constexpr uint8_t powerPin = 5;             // 电量监测
+#endif
+
+#ifdef BOARD_NOLOGO
+constexpr uint8_t wiredModePin = 6;         // USB,BLE启动模式
+constexpr uint8_t defHomePin = 4;           // 默认HOME
+constexpr uint8_t defStartPin = 41;         // 默认START
+constexpr uint8_t sckPin = 12;              // 屏幕SCK
+constexpr uint8_t sdaPin = 11;              // 屏幕SDA
+constexpr uint8_t powerPin = 9;             // 电量监测
+#endif
+
+#ifdef BOARD_WALNUT
+constexpr uint8_t wiredModePin = 8;         // USB,BLE启动模式
+constexpr uint8_t defHomePin = 6;           // 默认HOME
+constexpr uint8_t defStartPin = 2;          // 默认START
+constexpr uint8_t sckPin = 14;              // 屏幕SCK
+constexpr uint8_t sdaPin = 13;              // 屏幕SDA
+constexpr uint8_t powerPin = 11;            // 电量监测
+#endif
+
+#ifdef BOARD_DEVKITC
+constexpr uint8_t defHomePin = 9;
+constexpr uint8_t defStartPin = 8;
+constexpr uint8_t sckPin = 5;
+constexpr uint8_t sdaPin = 4;
+constexpr uint8_t powerPin = 42;            // 电量监测
+constexpr uint8_t wiredModePin = 41;        // USB,BLE启动模式
+#endif
+
 // constexpr int MaxBtnPerKey = 4;
 #define MaxBtnPerKey 4
 #define MaxPinNumber 64
@@ -117,6 +156,7 @@ struct pin_infos_t {
 
 struct general_config_t {
     SOCD::mode_t        socd;
+    
     bool loadPreference() {
         Preferences pref;
         pref.begin(APP_NS);
@@ -398,4 +438,5 @@ static void configDefault() {
     #endif
 
     pinInfos.autoLayout = false;
+
 }
