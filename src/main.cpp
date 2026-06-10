@@ -244,6 +244,28 @@ void screenTask(void* ptr) {
 
         auto homePressed = loopData.getInputState((int)VBtn::HOME);
         auto startPressed = loopData.getInputState((int)VBtn::START);
+        auto fnPressed = loopData.getInputState((int)VBtn::FN);
+
+        // FN + 方向键切换 SOCD 模式
+        if(fnPressed) {
+            if(loopData.getInputState((int)VBtn::DOWN)) {
+                loopData.socdMode = SOCD::mode_t::natural;
+                generalConfig.socd = loopData.socdMode;
+                generalConfig.writePreference();
+            } else if(loopData.getInputState((int)VBtn::LEFT)) {
+                loopData.socdMode = SOCD::mode_t::last_win;
+                generalConfig.socd = loopData.socdMode;
+                generalConfig.writePreference();
+            } else if(loopData.getInputState((int)VBtn::RIGHT)) {
+                loopData.socdMode = SOCD::mode_t::first_win;
+                generalConfig.socd = loopData.socdMode;
+                generalConfig.writePreference();
+            } else if(loopData.getInputState((int)VBtn::UP)) {
+                loopData.socdMode = SOCD::mode_t::upp;
+                generalConfig.socd = loopData.socdMode;
+                generalConfig.writePreference();
+            }
+        }
 
         if(homePressed && startPressed) {
             if(loopData.getInputState((int)VBtn::DOWN)) {

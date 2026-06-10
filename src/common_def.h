@@ -82,6 +82,7 @@ enum class VBtn {
     RS,
     LT,
     RT,
+    FN,
     VBTN_COUNT,
     INVALID,
 };
@@ -335,8 +336,8 @@ static void configDefault() {
     pinInfos.configVBtn(1, VBtn::HOME);
     pinInfos.configVBtn(7, VBtn::UP);
     pinInfos.displayIdx[7] = (int)VBtn::EMPTY;
-    pinInfos.configVBtn(21, VBtn::A, VBtn::B);
-    pinInfos.displayIdx[21] = (int)VBtn::RT+1;
+    pinInfos.configVBtn(21, VBtn::FN);
+    pinInfos.displayIdx[21] = (int)VBtn::EMPTY;
 
     pinInfos.configVBtn(15, VBtn::UP);
     pinInfos.configVBtn(16, VBtn::DOWN);
